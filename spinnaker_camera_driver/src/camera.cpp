@@ -597,6 +597,11 @@ void Camera::doPublish(const ImageConstPtr & im)
   imageMsg_.header.stamp = t;
   cameraInfoMsg_.header.stamp = t;
 
+  if (timestampPub_->get_subscription_count() != 0) {
+    timestampMsg_.stamp = t;
+    timestampPub_->publish(timestampMsg_);
+  }
+
   if (pub_.getNumSubscribers() > 0) {
     bool canEncode{false};
     const std::string encoding = flir_to_ros_encoding(im->pixelFormat_, &canEncode);
@@ -673,6 +678,8 @@ bool Camera::start()
       "~/" + topicPrefix_ + "control", 10,
       std::bind(&Camera::controlCallback, this, std::placeholders::_1));
   }
+  timestampPub_ =
+    node_->create_publisher<std_msgs::msg::Header>("~/" + topicPrefix_ + "timestamp", 1);
   metaPub_ =
     node_->create_publisher<flir_camera_msgs::msg::ImageMetaData>("~/" + topicPrefix_ + "meta", 1);
 

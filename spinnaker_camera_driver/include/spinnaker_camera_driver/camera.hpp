@@ -30,6 +30,7 @@
 #include <spinnaker_camera_driver/image.hpp>
 #include <spinnaker_camera_driver/spinnaker_wrapper.hpp>
 #include <spinnaker_camera_driver/synchronizer.hpp>
+#include <std_msgs/msg/header.hpp>
 #include <std_msgs/msg/float64.hpp>
 #include <thread>
 
@@ -127,6 +128,7 @@ private:
   rclcpp::Node * node_;
   image_transport::ImageTransport * imageTransport_;
   image_transport::CameraPublisher pub_;
+  rclcpp::Publisher<std_msgs::msg::Header>::SharedPtr timestampPub_;
   rclcpp::Publisher<flir_camera_msgs::msg::ImageMetaData>::SharedPtr metaPub_;
   std::string serial_;
   std::string name_;
@@ -152,6 +154,7 @@ private:
   std::shared_ptr<camera_info_manager::CameraInfoManager> infoManager_;
   sensor_msgs::msg::Image imageMsg_;
   sensor_msgs::msg::CameraInfo cameraInfoMsg_;
+  std_msgs::msg::Header timestampMsg_;
   flir_camera_msgs::msg::ImageMetaData metaMsg_;
   rclcpp::Node::OnSetParametersCallbackHandle::SharedPtr callbackHandle_;  // keep alive callbacks
   rclcpp::TimerBase::SharedPtr statusTimer_;
